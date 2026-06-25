@@ -11,6 +11,10 @@ import 'package:path/path.dart' as path;
 
 void main(List<String> args) async {
   await build(args, (input, output) async {
+    // No-op for invocations that don't request code assets (e.g. flutter run's
+    // post-launch metadata pass sends build_asset_types: []). Accessing
+    // input.config.code in that case throws a null-check error.
+    if (!input.config.buildCodeAssets) return;
     final localBuild = input.userDefines['local_build'] as bool? ?? false;
     if (localBuild) {
       await runBuild(input, output);
